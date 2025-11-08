@@ -10,7 +10,30 @@ const PORT = process.env.PORT || 3000;
 
 // --- Middlewares ---
 app.use(express.json()); 
-app.use(cors()); 
+app.use(express.urlencoded({ extended: true }));
+
+// **INICIO DE CÓDIGO CORREGIDO PARA CORS**
+// 1. Define el origen permitido (Tu URL publicada en Netlify)
+const allowedOrigins = ['https://gestortareasusuarios.netlify.app']; 
+
+// 2. Configuración de CORS
+app.use(cors({
+    origin: function(origin, callback){
+        // Permitir peticiones sin 'origin' (como las de Postman)
+        if(!origin) return callback(null, true); 
+        
+        // Permitir solo si el origin está en la lista de permitidos
+        if(allowedOrigins.indexOf(origin) === -1){
+            const msg = 'La política CORS no permite el acceso desde el Origen especificado.';
+            // En caso de fallo, devolvemos el error 
+            return callback(new Error(msg), false);
+        }
+        // Si el origen es permitido (Netlify), damos acceso
+        return callback(null, true);
+    },
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Métodos CRUD que usamos
+    credentials: true
+}));
 
 
 // --- 1. Conexión a MongoDB Atlas ---
