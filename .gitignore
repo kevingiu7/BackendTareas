@@ -1,0 +1,9 @@
+# .gitignore
+
+# 1. Dependencias y Caché
+/node_modules
+/dist
+npm-debug.log*
+
+# 2. Secretos y Entorno
+.env
